@@ -24,7 +24,7 @@ public class DBcon {
 			 
 		 try {
 			 Statement stmnt = connect.createStatement();
-			 stmnt.execute(SQL);
+			 stmnt.execute(SQL); 
 		 }
 		 	catch(Exception missfall) {
 		 		JOptionPane.showMessageDialog(null, missfall);
