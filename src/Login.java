@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 public class Login extends JFrame implements ActionListener {
-	
+	DBcon db=new DBcon("localhost","root","","library");
 	public Login() {
 		super("Login");
 		try {
@@ -42,14 +42,14 @@ public class Login extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		String command=arg0.getActionCommand();
 		if(command=="add media") {
-			DBcon db=new DBcon("localhost","root","","library");
+			
 			String MType = JOptionPane.showInputDialog(null,"DVD, CD or Book?");
 			switch(MType){
 			case "DVD":
 				String Director = JOptionPane.showInputDialog(null,"Write directors name");;
 				String ID = JOptionPane.showInputDialog(null,"Write or scan ID");;
 				String title = JOptionPane.showInputDialog(null,"write the title of the DVD");;
-				String SQL = String.format("Insert into dvd(MediaID,Director,Title)"+"VALUES ('%s','%s','%s')",Director,ID,title);
+				String SQL = String.format("Insert into dvd(MediaID,Director,Title)"+"VALUES ('%s','%s','%s')",ID,Director,title);
 				String SQL2 = String.format("Insert into media(MediaID,MType)"+"VALUES ('%s','dvd')",ID);
 				db.execute(SQL);
 				db.execute(SQL2);
