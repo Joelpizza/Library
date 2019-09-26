@@ -146,6 +146,8 @@ public class Login extends JFrame implements ActionListener {
 				JOptionPane.showMessageDialog(null, "fel skrivet");
 				break;
 			}
+			new Login();
+			this.dispose();
 		}
 		if(command=="remove media") {
 			String RID = JOptionPane.showInputDialog("Type the id of the media you want to remove");
@@ -184,7 +186,8 @@ public class Login extends JFrame implements ActionListener {
 			
 		}
 		if(command=="list of loans") {
-			
+			new LoanList();
+			this.dispose();
 		}
 		
 	}
