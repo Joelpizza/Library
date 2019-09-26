@@ -12,10 +12,9 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
-import com.mysql.jdbc.PreparedStatement;
-
 public class Login extends JFrame implements ActionListener {
-	DBcon db=new DBcon("localhost","root","","library");
+	
+	private DBcon db=new DBcon("localhost","root","","library");
 	private JTable mediatable;
 	private DefaultTableModel setup;
 	
@@ -41,6 +40,8 @@ public class Login extends JFrame implements ActionListener {
 		JPanel south = new JPanel();
 		delmedia.addActionListener(this);
 		addmedia.addActionListener(this);
+		loanmedia.addActionListener(this);
+		loanshower.addActionListener(this);
 		center.add(medialist());
 		north.add(addmedia);
 		north.add(delmedia);
@@ -156,6 +157,30 @@ public class Login extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(null,"Deleted media");
 		}
 		if(command=="Register loan") {
+			Object[][] dataloan = db.getData("Select * from loans");
+			Object[][] mediadata = db.getData("Select * from media");
+			String LoanID = JOptionPane.showInputDialog("Enter ID of loaned media");
+			boolean isloaned=false;
+			for(int i=0;i<dataloan.length;i++) {
+				if(LoanID.equals(dataloan[i][2].toString())){
+					JOptionPane.showMessageDialog(null, "This media is already loaned");
+					isloaned=true;
+				}
+			}
+			if(isloaned==false) {
+				for(int i=0;i<mediadata.length;i++) {
+					if(LoanID.equals(mediadata[i][0])){
+						String Socialsec = JOptionPane.showInputDialog("enter social security number of loaner");
+						String Date = JOptionPane.showInputDialog("Enter date of loan");
+						String SQL=String.format("Insert into loans(Socialsecurity,Date,MediaID) VALUES ('%s','%s','%s')",Socialsec,Date,LoanID);
+						db.execute(SQL);
+						JOptionPane.showMessageDialog(null, "Added loan");
+					}
+					
+				}
+				
+				
+			}
 			
 		}
 		if(command=="list of loans") {
