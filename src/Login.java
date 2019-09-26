@@ -6,12 +6,19 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 
 public class Login extends JFrame implements ActionListener {
 	DBcon db=new DBcon("localhost","root","","library");
+	private JTable mediatable;
+	private DefaultTableModel setup;
+	
 	public Login() {
-		super("Login");
+		super("this is library");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			}
@@ -22,12 +29,49 @@ public class Login extends JFrame implements ActionListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(1200,700));
 		setLayout(new BorderLayout());
-		JButton addmedia= new JButton("add media");
+		JButton addmedia = new JButton("add media");
+		JButton delmedia = new JButton("remove media");
+		
+		JPanel north = new JPanel();
+		JPanel center = new JPanel();
+		delmedia.addActionListener(this);
 		addmedia.addActionListener(this);
-		add(addmedia);
+		delmedia.setPreferredSize(new Dimension(100,100));
+		addmedia.setPreferredSize(new Dimension(100,100));
+		center.add(medialist());
+		north.add(addmedia);
+		north.add(delmedia);
+		add(BorderLayout.NORTH,north);
+		add(BorderLayout.CENTER,center);
 		pack();
 		setVisible(true);
 	}
+	private JScrollPane medialist() {
+		Object[]fields = {"Mediatype","Title","ID","Author/director","Helpers/voice"};
+		Object[][] rows = new Object[0][4];
+		setup = new DefaultTableModel(rows,fields);
+		mediatable = new JTable(setup);
+		mediatable.setPreferredScrollableViewportSize(new Dimension(1000,500));
+		JScrollPane list = new JScrollPane(mediatable);
+		
+		Object[][] datas = db.getData("select * from media inner join dvd ON media.MediaID = dvd.MediaID ORDER by MType");
+		
+		for(int i=0;i<datas.length;i++) {
+			String MediaID = datas[i][0].toString();
+			String MType = datas[i][1].toString();
+			String Creator = datas[i][3].toString();
+			String title = datas[i][4].toString();
+//			System.out.println(datas[i][6]);
+			if(MType=="cd") {
+				String Voice=datas[i][6].toString();
+				setup.addRow(new Object[]{MType,title,MediaID,Creator,Voice});
+			}
+			else {
+				setup.addRow(new Object[]{MType,title,MediaID,Creator});
+			}
+		}
+		return list;
+}
 	
 	
 	public static void main(String[] args) {
@@ -57,6 +101,7 @@ public class Login extends JFrame implements ActionListener {
 				SQL2 = String.format("Insert into media(MediaID,MType)"+"VALUES ('%s','dvd')",ID);
 				db.execute(SQL);
 				db.execute(SQL2);
+				JOptionPane.showMessageDialog(null,"Added media");
 				break;
 			case "CD":
 				Author = JOptionPane.showInputDialog("Write authors name");
@@ -67,6 +112,7 @@ public class Login extends JFrame implements ActionListener {
 				SQL2 = String.format("Insert into media(MediaID,MType)"+"VALUES ('%s','cd')",ID);
 				db.execute(SQL);
 				db.execute(SQL2);
+				JOptionPane.showMessageDialog(null,"Added media");
 				break;
 			case "Book":
 				Author = JOptionPane.showInputDialog(null,"Write authors name");
@@ -76,9 +122,21 @@ public class Login extends JFrame implements ActionListener {
 				SQL2 = String.format("Insert into media(MediaID,MType)"+"VALUES ('%s','book')",ID);
 				db.execute(SQL);
 				db.execute(SQL2);
+				JOptionPane.showMessageDialog(null,"Added media");
 				break;
-			default: JOptionPane.showMessageDialog(null, "fel skrivet");	
+			default: 
+				JOptionPane.showMessageDialog(null, "fel skrivet");
+				break;
 			}
+		}
+		if(command=="remove media") {
+			String RID = JOptionPane.showInputDialog("Type the id of the media you want to remove");
+			Object[][] remdata = db.getData(String.format("SELECT MType from media where MediaID='%s'",RID));
+				String SQL = String.format("Delete from media WHERE MediaID='%s'",RID);
+				String SQL2 = String.format("Delete from %s WHERE MediaID='%s'",remdata[0][0],RID);
+				db.execute(SQL);
+				db.execute(SQL2);
+			JOptionPane.showMessageDialog(null,"Deleted media");
 		}
 		
 	}
