@@ -18,7 +18,6 @@ public class Login extends JFrame implements ActionListener {
 	DBcon db=new DBcon("localhost","root","","library");
 	private JTable mediatable;
 	private DefaultTableModel setup;
-	PreparedStatement ps = null;
 	
 	public Login() {
 		super("this is library");
@@ -34,18 +33,22 @@ public class Login extends JFrame implements ActionListener {
 		setLayout(new BorderLayout());
 		JButton addmedia = new JButton("add media");
 		JButton delmedia = new JButton("remove media");
+		JButton loanmedia = new JButton("Register loan");
+		JButton loanshower = new JButton("list of loans");
 		
 		JPanel north = new JPanel();
 		JPanel center = new JPanel();
+		JPanel south = new JPanel();
 		delmedia.addActionListener(this);
 		addmedia.addActionListener(this);
-		delmedia.setPreferredSize(new Dimension(100,100));
-		addmedia.setPreferredSize(new Dimension(100,100));
 		center.add(medialist());
 		north.add(addmedia);
 		north.add(delmedia);
+		south.add(loanmedia);
+		south.add(loanshower);
 		add(BorderLayout.NORTH,north);
 		add(BorderLayout.CENTER,center);
+		add(BorderLayout.SOUTH,south);
 		pack();
 		setVisible(true);
 	}
@@ -57,11 +60,7 @@ public class Login extends JFrame implements ActionListener {
 		mediatable.setPreferredScrollableViewportSize(new Dimension(1000,500));
 		JScrollPane list = new JScrollPane(mediatable);
 		
-		/*
-		String sql = "select * from media inner join ? ON media.MediaID = ?.MediaID ORDER by MType";
-		
-		ps.setString(1, book);
-		*/
+
 		
 		
 		Object[][] datas = db.getData("select * from media left join dvd ON media.MediaID = dvd.MediaID left join book ON media.MediaID = book.MediaID left join cd ON media.MediaID = cd.MediaID ORDER by MType");
@@ -155,6 +154,12 @@ public class Login extends JFrame implements ActionListener {
 				db.execute(SQL);
 				db.execute(SQL2);
 			JOptionPane.showMessageDialog(null,"Deleted media");
+		}
+		if(command=="Register loan") {
+			
+		}
+		if(command=="list of loans") {
+			
 		}
 		
 	}
