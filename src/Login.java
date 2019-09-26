@@ -12,10 +12,13 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
+import com.mysql.jdbc.PreparedStatement;
+
 public class Login extends JFrame implements ActionListener {
 	DBcon db=new DBcon("localhost","root","","library");
 	private JTable mediatable;
 	private DefaultTableModel setup;
+	PreparedStatement ps = null;
 	
 	public Login() {
 		super("this is library");
@@ -54,21 +57,36 @@ public class Login extends JFrame implements ActionListener {
 		mediatable.setPreferredScrollableViewportSize(new Dimension(1000,500));
 		JScrollPane list = new JScrollPane(mediatable);
 		
-		Object[][] datas = db.getData("select * from media inner join dvd ON media.MediaID = dvd.MediaID ORDER by MType");
+		/*
+		String sql = "select * from media inner join ? ON media.MediaID = ?.MediaID ORDER by MType";
+		
+		ps.setString(1, book);
+		*/
+		
+		
+		Object[][] datas = db.getData("select * from media left join dvd ON media.MediaID = dvd.MediaID left join book ON media.MediaID = book.MediaID left join cd ON media.MediaID = cd.MediaID ORDER by MType");
 		
 		for(int i=0;i<datas.length;i++) {
+			
 			String MediaID = datas[i][0].toString();
 			String MType = datas[i][1].toString();
-			String Creator = datas[i][3].toString();
-			String title = datas[i][4].toString();
-//			System.out.println(datas[i][6]);
-			if(MType=="cd") {
-				String Voice=datas[i][6].toString();
-				setup.addRow(new Object[]{MType,title,MediaID,Creator,Voice});
-			}
-			else {
+			if(MType.equals("dvd") ){
+				String Creator = datas[i][3].toString();
+				String title = datas[i][4].toString();
 				setup.addRow(new Object[]{MType,title,MediaID,Creator});
 			}
+			if(MType.equals("cd")) {
+				String Voice=datas[i][14].toString();
+				String Creator = datas[i][11].toString();
+				String title = datas[i][12].toString();
+				setup.addRow(new Object[]{MType,title,MediaID,Creator,Voice});
+			}
+			if(MType.equals("book")){
+				String Creator = datas[i][7].toString();
+				String title = datas[i][8].toString();
+				setup.addRow(new Object[]{MType,title,MediaID,Creator});
+			}
+			
 		}
 		return list;
 }
