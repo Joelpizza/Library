@@ -31,6 +31,7 @@ public class Login extends JFrame implements ActionListener {
 		setPreferredSize(new Dimension(1200,700));
 		setLayout(new BorderLayout());
 		JButton addmedia = new JButton("add media");
+		JButton adduser = new JButton("add user");
 		JButton delmedia = new JButton("remove media");
 		JButton loanmedia = new JButton("Register loan");
 		JButton loanshower = new JButton("list of loans");
@@ -42,11 +43,13 @@ public class Login extends JFrame implements ActionListener {
 		addmedia.addActionListener(this);
 		loanmedia.addActionListener(this);
 		loanshower.addActionListener(this);
+		adduser.addActionListener(this);
 		center.add(medialist());
 		north.add(addmedia);
 		north.add(delmedia);
 		south.add(loanmedia);
 		south.add(loanshower);
+		south.add(adduser);
 		add(BorderLayout.NORTH,north);
 		add(BorderLayout.CENTER,center);
 		add(BorderLayout.SOUTH,south);
@@ -157,6 +160,8 @@ public class Login extends JFrame implements ActionListener {
 				db.execute(SQL);
 				db.execute(SQL2);
 			JOptionPane.showMessageDialog(null,"Deleted media");
+			new Login();
+			this.dispose();
 		}
 		if(command=="Register loan") {
 			Object[][] dataloan = db.getData("Select * from loans");
@@ -189,6 +194,17 @@ public class Login extends JFrame implements ActionListener {
 			new LoanList();
 			this.dispose();
 		}
+		if(command=="add user") {
+			String Fname = JOptionPane.showInputDialog("Type surname of new user");
+			String Lname = JOptionPane.showInputDialog("Type lastname of new user");
+			String Socialsec = JOptionPane.showInputDialog("Type social security number of new user");
+			if(Socialsec.length()==10) {
+			String SQL=String.format("Insert into user(Socialsecurity,Fname,Lname) VALUES ('%s','%s','%s')",Socialsec,Fname,Lname);
+			db.execute(SQL);
+			JOptionPane.showMessageDialog(null, "User added");
+			}
+		}
+		
 		
 	}
 
