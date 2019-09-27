@@ -11,12 +11,12 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
-public class LoanList extends JFrame implements ActionListener{
+public class Userlist extends JFrame implements ActionListener{
 	private DBcon db=new DBcon("localhost","root","","library");
-	private JTable Loantable;
+	private JTable reservationstable;
 	private DefaultTableModel setup;
-	public LoanList() {
-		super("this is loanlist");
+	public Userlist() {
+		super("this is userlist");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			}
@@ -33,7 +33,7 @@ public class LoanList extends JFrame implements ActionListener{
 		JPanel center = new JPanel();
 		JPanel south = new JPanel();
 		back.addActionListener(this);
-		center.add(medialist());
+		center.add(userlist());
 		north.add(back);
 		add(BorderLayout.NORTH,north);
 		add(BorderLayout.CENTER,center);
@@ -41,46 +41,33 @@ public class LoanList extends JFrame implements ActionListener{
 		pack();
 		setVisible(true);
 	}
-	private JScrollPane medialist() {
-		Object[]fields = {"Title","ID","loaner"};
+	private JScrollPane userlist() {
+		Object[]fields = {"Lname","Fname","Socialsecurity"};
 		Object[][] rows = new Object[0][3];
 		setup = new DefaultTableModel(rows,fields);
-		Loantable = new JTable(setup);
-		Loantable.setPreferredScrollableViewportSize(new Dimension(1000,500));
-		JScrollPane list = new JScrollPane(Loantable);
+		reservationstable = new JTable(setup);
+		reservationstable.setPreferredScrollableViewportSize(new Dimension(1000,500));
+		JScrollPane list = new JScrollPane(reservationstable);
 		
 
 		
 		
-		Object[][] datas = db.getData("select * from loans left join dvd ON loans.MediaID = dvd.MediaID left join book ON loans.MediaID = book.MediaID left join cd ON loans.MediaID = cd.MediaID left join media ON loans.MediaID = media.MediaID ORDER by Date");
+		Object[][] datas = db.getData("select * from user");
 		
 		for(int i=0;i<datas.length;i++) {
 			
-			String MediaID = datas[i][0].toString();
-			String UsrID = datas[i][1].toString();
-			String title = null;
-			String MType = datas[i][17].toString();
-			if(MType.equals("dvd") ){
-				title = datas[i][5].toString();
-				
-			}
-			if(MType.equals("cd")) {
-				title = datas[i][13].toString();
-				
-			}
-			if(MType.equals("book")){
-				title = datas[i][9].toString();
-				
-			}
-			setup.addRow(new Object[]{title,MediaID,UsrID});
+			String Lname = datas[i][2].toString();
+			String Fname = datas[i][1].toString();
+			String UserID = datas[i][0].toString();
+			
+			setup.addRow(new Object[]{Lname,Fname,UserID});
 			
 		}
 		return list;
-}
-
+	}
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		String command=arg0.getActionCommand();
+	public void actionPerformed(ActionEvent e) {
+		String command=e.getActionCommand();
 		if(command=="Back") {
 			new Login();
 			this.dispose();

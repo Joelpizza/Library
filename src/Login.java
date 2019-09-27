@@ -35,6 +35,8 @@ public class Login extends JFrame implements ActionListener {
 		JButton delmedia = new JButton("remove media");
 		JButton loanmedia = new JButton("Register loan");
 		JButton loanshower = new JButton("list of loans");
+		JButton reserve = new JButton("reservations");
+		JButton userlist = new JButton("List of users");
 		
 		JPanel north = new JPanel();
 		JPanel center = new JPanel();
@@ -44,12 +46,16 @@ public class Login extends JFrame implements ActionListener {
 		loanmedia.addActionListener(this);
 		loanshower.addActionListener(this);
 		adduser.addActionListener(this);
+		reserve.addActionListener(this);
+		userlist.addActionListener(this);
 		center.add(medialist());
 		north.add(addmedia);
 		north.add(delmedia);
 		south.add(loanmedia);
 		south.add(loanshower);
 		south.add(adduser);
+		south.add(userlist);
+		south.add(reserve);
 		add(BorderLayout.NORTH,north);
 		add(BorderLayout.CENTER,center);
 		add(BorderLayout.SOUTH,south);
@@ -58,7 +64,7 @@ public class Login extends JFrame implements ActionListener {
 	}
 	private JScrollPane medialist() {
 		Object[]fields = {"Mediatype","Title","ID","Author/director","Helpers/voice"};
-		Object[][] rows = new Object[0][4];
+		Object[][] rows = new Object[0][5];
 		setup = new DefaultTableModel(rows,fields);
 		mediatable = new JTable(setup);
 		mediatable.setPreferredScrollableViewportSize(new Dimension(1000,500));
@@ -204,7 +210,14 @@ public class Login extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(null, "User added");
 			}
 		}
-		
+		if(command=="reservations") {
+			new reservations();
+			this.dispose();
+		}
+		if(command=="List of users") {
+			new Userlist();
+			this.dispose();
+		}
 		
 	}
 
